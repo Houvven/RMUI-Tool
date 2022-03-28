@@ -9,12 +9,12 @@ class PullTest {
     fun parseXMLWithPull(): List<String> {
         val supportPkgList = mutableListOf<String>()
         try {
-            val inputStream = GlobalContext.context.openFileInput("test.xml")
+            val inputStream = GlobalContext.context.openFileInput("sys_zoom_window_config.xml")
             val factory = XmlPullParserFactory.newInstance()
             val xmlPullParser = factory.newPullParser()
             xmlPullParser.setInput(inputStream, "UTF-8")
             var eventType = xmlPullParser.eventType
-            var pkg = ""
+            var pkg: String
             while (eventType != XmlPullParser.END_DOCUMENT) {
                 val nodeName = xmlPullParser.name
                 when (eventType) {

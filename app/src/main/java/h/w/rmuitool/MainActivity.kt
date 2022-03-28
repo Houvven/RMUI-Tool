@@ -1,7 +1,6 @@
 package h.w.rmuitool
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -13,8 +12,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.material.Checkbox
+import androidx.compose.material.CheckboxDefaults
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,10 +33,8 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.WindowCompat
 import androidx.palette.graphics.Palette
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import h.w.rmuitool.ktx.GlobalContext
-import h.w.rmuitool.ktx.showToast
+import h.w.rmuitool.ktx.*
 import h.w.rmuitool.pullxml.PullTest
-import h.w.rmuitool.pullxml.process
 import h.w.rmuitool.ui.theme.RMUIToolTheme
 
 class MainActivity : ComponentActivity() {
@@ -61,19 +63,18 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun AppItem(appInfo: AppInfo) {
+    cp()
     val supportPkgList = PullTest().parseXMLWithPull()
     val value = remember {
-        mutableStateOf(supportPkgList.indexOf(appInfo.label) != -1)
+        mutableStateOf(supportPkgList.indexOf(appInfo.packageName) != -1)
     }
-    val flag = supportPkgList.indexOf(appInfo.packageName) != -1
     Row(
         modifier = Modifier
             .height(70.dp)
             .fillMaxWidth()
             .clickable {
                 value.value = !value.value
-                Log.d("安安安徽", "骄傲傻怂")
-                PullTest().parseXMLWithPull()
+                if (value.value) appInfo.packageName.addXMLTag() else appInfo.packageName.deleteXMLTag()
             }
             .padding(all = 7.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -122,8 +123,11 @@ fun AppItem(appInfo: AppInfo) {
         Spacer(modifier = Modifier.width(70.dp))
 
         Checkbox(
-            checked = flag,
-            onCheckedChange = { value.value = it },
+            checked = value.value,
+            onCheckedChange = {
+                value.value = it
+                if (value.value) appInfo.packageName.addXMLTag() else appInfo.packageName.deleteXMLTag()
+            },
             colors = CheckboxDefaults.colors(
                 checkedColor = Color(0xFF7FFF00),
                 checkmarkColor = Color.White,
