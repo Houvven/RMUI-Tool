@@ -20,24 +20,17 @@ private typealias MethodHookParam = XC_MethodHook.MethodHookParam
 private typealias Replacer = (XC_MethodHook.MethodHookParam) -> Any?
 private typealias Hooker = (XC_MethodHook.MethodHookParam) -> Unit
 
-//##############################################################################################
-//show TOAST
 fun String.showToast(length: Int = Toast.LENGTH_SHORT) {
     Toast.makeText(context, this, length).show()
 }
 
-//Make Shared Preferences
 @SuppressLint("WrongConstant")
 fun String.makeSP(mode: Int = Application.MODE_APPEND) = context.getSharedPreferences(this, mode)!!
 
 
-//[Xposed]
-//################################################################################################################
-//XSP
 fun String.makeXSP(): XSharedPreferences = XSharedPreferences(packageName, this)
 fun XSharedPreferences.getBool(key: String, defValue: Boolean = false): Boolean = this.getBoolean(key, defValue)
 
-//Xposed log error
 fun log(text: String, throwable: Any) {
     when (throwable) {
         is NoSuchFieldError -> XposedBridge.log("$packageName Not such Field:$text")
@@ -50,20 +43,15 @@ fun log(text: String, throwable: Any) {
     }
 }
 
-//Find Class
 fun String.findClass() = XposedHelpers.findClass(this, HookInit.classLoader)!!
 
-//Find ClassIfExists
 fun String.findClassIfExists(): Class<*>? =
     XposedHelpers.findClassIfExists(this, HookInit.classLoader)
 
-//Find Field
 fun Class<*>.findField(fieldName: String) = XposedHelpers.findField(this, fieldName)!!
 
-//Find FieldIfExists
 fun Class<*>.findFieldIfExists(fieldName: String): Field? = XposedHelpers.findFieldIfExists(this, fieldName)
 
-//Hook method
 fun Class<*>.hookMethod(methodName: String?, vararg args: Any?) =
     try {
         XposedHelpers.findAndHookMethod(this, methodName, *args)
@@ -86,11 +74,8 @@ fun String.hookMethod(methodName: String?, vararg args: Any?) =
         null
     }
 
-//XC_MethodHook.MethodHookParam
-//##################################################################################################
 inline fun XC_MethodHook.MethodHookParam.callHooker(crossinline hooker: Hooker) = hooker(this)
 
-//Before hook method
 inline fun Class<*>.beforeHookMethod(
     methodName: String?,
     vararg args: Any?,
@@ -108,7 +93,6 @@ inline fun String.beforeHookMethod(
 })
 
 
-//After hook method
 inline fun Class<*>.afterHookMethod(
     methodName: String?,
     vararg args: Any?,
@@ -124,7 +108,6 @@ inline fun String.afterHookMethod(
 ) = hookMethod(methodName, *args, object : XC_MethodHook() {
     override fun beforeHookedMethod(param: MethodHookParam) = param.callHooker(hooker)
 })
-//##################################################################################################
 
 
 

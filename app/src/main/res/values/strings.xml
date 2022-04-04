@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">RMUI Tool</string>
+    <string name="title_activity_oplus">OplusActivity</string>
 </resources>

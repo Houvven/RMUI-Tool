@@ -1,5 +1,13 @@
-# RMUI-Tool | Realme UI 助手
+# RMUI-Tool
 
-A tool for _*Realme UI*_, and it is also an Xposed module.
-This project is based on _*Realme UI3.0*_, theoretically supports _*Color OS*_ and _*Color OS for One Plus*_.
- 
+### [English]
+
+A tool for __*Realme UI*__, and it is also an Xposed module.
+This project is based on __*Realme UI3.0*__, theoretically supports __*Color OS*__ and __*Color OS for One Plus*__.
+
+
+
+
+
+
+

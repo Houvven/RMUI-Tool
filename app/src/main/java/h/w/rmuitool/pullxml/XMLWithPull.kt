@@ -4,7 +4,7 @@ import h.w.rmuitool.ktx.GlobalContext
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserFactory
 
-class PullTest {
+class XMLWithPull {
 
     fun parseXMLWithPull(): List<String> {
         val supportPkgList = mutableListOf<String>()
@@ -18,14 +18,12 @@ class PullTest {
             while (eventType != XmlPullParser.END_DOCUMENT) {
                 val nodeName = xmlPullParser.name
                 when (eventType) {
-
                     XmlPullParser.START_TAG -> {
                         if (nodeName == "pkg") {
                             pkg = xmlPullParser.nextText()
                             supportPkgList.add(pkg)
                         }
                     }
-
                     XmlPullParser.END_TAG -> {
                         if ("support_pkg_list" == nodeName) {
                             break

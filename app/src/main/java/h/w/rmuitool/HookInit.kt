@@ -3,10 +3,10 @@ package h.w.rmuitool
 import android.content.res.XResources
 import de.robv.android.xposed.IXposedHookInitPackageResources
 import de.robv.android.xposed.IXposedHookLoadPackage
-import de.robv.android.xposed.XSharedPreferences
 import de.robv.android.xposed.callbacks.XC_InitPackageResources
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import h.w.rmuitool.hook.Browser
+import h.w.rmuitool.ktx.makeXSP
 
 
 /*
@@ -20,7 +20,7 @@ class HookInit : IXposedHookLoadPackage, IXposedHookInitPackageResources {
     companion object {
         lateinit var classLoader: ClassLoader
         lateinit var resources: XResources
-        lateinit var xSharedPreferences: XSharedPreferences
+        val xsp = "function".makeXSP()
     }
 
     override fun handleLoadPackage(lpparam: XC_LoadPackage.LoadPackageParam) {
