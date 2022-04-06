@@ -3,7 +3,7 @@ package h.w.rmuitool.ui.tool
 import android.content.Context
 import android.util.DisplayMetrics
 import android.view.WindowManager
-import h.w.rmuitool.ktx.GlobalContext
+import h.w.rmuitool.logic.utils.GlobalContext
 
 class ScreenProperty {
     companion object {

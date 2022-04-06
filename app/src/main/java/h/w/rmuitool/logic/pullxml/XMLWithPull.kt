@@ -1,6 +1,6 @@
-package h.w.rmuitool.pullxml
+package h.w.rmuitool.logic.pullxml
 
-import h.w.rmuitool.ktx.GlobalContext
+import h.w.rmuitool.logic.utils.GlobalContext
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserFactory
 

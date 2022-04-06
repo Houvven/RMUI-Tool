@@ -5,22 +5,16 @@ import de.robv.android.xposed.IXposedHookInitPackageResources
 import de.robv.android.xposed.IXposedHookLoadPackage
 import de.robv.android.xposed.callbacks.XC_InitPackageResources
 import de.robv.android.xposed.callbacks.XC_LoadPackage
-import h.w.rmuitool.hook.Browser
-import h.w.rmuitool.ktx.makeXSP
+import h.w.rmuitool.logic.hook.Browser
+import h.w.rmuitool.logic.utils.ktx.makeXSharedPreferences
 
-
-/*
-// Real programmers don’t comment their code.
-// If it was hard to write,
-// it should be hard to understand.
-*/
 
 class HookInit : IXposedHookLoadPackage, IXposedHookInitPackageResources {
 
     companion object {
         lateinit var classLoader: ClassLoader
         lateinit var resources: XResources
-        val xsp = "function".makeXSP()
+        val xsp = "function".makeXSharedPreferences()
     }
 
     override fun handleLoadPackage(lpparam: XC_LoadPackage.LoadPackageParam) {

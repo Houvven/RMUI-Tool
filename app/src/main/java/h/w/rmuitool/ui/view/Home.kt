@@ -1,135 +1,129 @@
+@file:JvmName("ExtendKt")
+
 package h.w.rmuitool.ui.view
 
-import android.annotation.SuppressLint
-import android.app.Application
-import android.content.SharedPreferences
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.Checkbox
+import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import h.w.rmuitool.ktx.makeSP
-import h.w.rmuitool.ktx.showToast
+import androidx.palette.graphics.Palette
+import h.w.rmuitool.AppInfo
+import h.w.rmuitool.GetAppList
 import h.w.rmuitool.ui.tool.ScreenProperty
 import kotlin.concurrent.thread
 
-data class XposedFunction(val title: String, val subTitleL: String = "", val key: String)
-
-class Functions {
-    companion object {
-        val functionList = mutableListOf<XposedFunction>()
+@Composable
+fun NotRoot() {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "No Root, Not for you",
+            fontSize = 21.sp,
+            fontWeight = FontWeight(800),
+            color = MaterialTheme.colors.onSurface
+        )
     }
+}
 
-    fun putFunction() {
-        functionList.run {
-            add(
-                XposedFunction(
-                    title = "浏览器简洁模式",
-                    subTitleL = "Color os的系统浏览器需要申请才能开启简洁模式，开启该功能无需申请申请即可使用",
-                    key = "home_page"
-                )
-            )
+object Home {
+    var appInfoList = listOf<AppInfo>()
+}
 
-            add(
-                XposedFunction(
-                    title = "隐藏浏览器简洁模式下的footer",
-                    key = "hide_home_page_footer"
-                )
-            )
-
-            add(
-                XposedFunction(
-                    title = "隐藏浏览器下载页面的热门下载",
-                    key = "hide_download_footer"
-                )
-            )
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun AppInfoList() {
+    val showSystemApp by remember { mutableStateOf(true) }
+    if (Home.appInfoList.isEmpty()) {
+        Home.appInfoList = GetAppList().selectAppInfo(showSystemApp)
+    }
+    LazyColumn(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        stickyHeader { }
+        items(Home.appInfoList) {
+            AppInfoItem(appInfo = it)
         }
     }
 }
 
-object Sp {
-    lateinit var sp: SharedPreferences
-}
-
-
-@SuppressLint("WorldReadableFiles")
 @Composable
-fun HomeListView() {
-    try {
-        val sp = "function".makeSP(Application.MODE_WORLD_READABLE)
-        Sp.sp = sp
-    } catch (t: Throwable) {
-        "你好像没有在Xposed激活模块呢".showToast()
-    }
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
-        items(Functions.functionList) {
-            HomeItems(functionInfo = it)
-        }
-    }
-}
-
-@SuppressLint("CommitPrefEdits")
-@Composable
-fun HomeItems(functionInfo: XposedFunction) {
+fun AppInfoItem(appInfo: AppInfo) {
     val width = ScreenProperty.screenWidth
-    var jh = true
-    val checked = remember {
-        try {
-            mutableStateOf(Sp.sp.getBoolean(functionInfo.key, false))
-        } catch (t: Throwable) {
-            jh = false
-            mutableStateOf(false)
-        }
-    }
+    val icon = appInfo.icon
+    val palette = Palette.from(icon).generate()
+    val color = Color(palette.getDominantColor(0x00FFFFFF))
+    val checked = remember { mutableStateOf(GetAppList().selectEnableInfo(appInfo.packageName)) }
     Row(
         modifier = Modifier
-            .height(50.dp)
+            .height(70.dp)
             .fillMaxWidth()
             .clickable {
-                if (!jh) {
-                    "xposed未激活".showToast()
-                } else {
-                    thread {
-                        val checkedValue = !checked.value
-                        checked.value = checkedValue
-                        Sp.sp
-                            .edit()
-                            .run {
-                                putBoolean(functionInfo.key, checkedValue)
-                                apply()
-                            }
-                    }
+                thread(start = true) {
+                    val temp = !checked.value
+                    checked.value = temp
+                    GetAppList().updateAppInfo(temp, appInfo.packageName)
                 }
             },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Spacer(modifier = Modifier.width((width * 0.05).dp))
-        Column(modifier = Modifier.width((width * 0.8).dp)) {
+        Image(
+            bitmap = icon.asImageBitmap(),
+            contentDescription = null,
+            modifier = Modifier
+                .size(40.dp)
+                .clip(CircleShape)
+                .border(width = 2.dp, color = color, shape = CircleShape)
+        )
+        Spacer(modifier = Modifier.width((width * 0.025).dp))
+        Column(
+            modifier = Modifier.width((width * 0.7).dp)
+        ) {
             Text(
-                text = functionInfo.title,
+                text = appInfo.label,
                 fontFamily = FontFamily.Default,
                 fontWeight = FontWeight(500),
                 color = MaterialTheme.colors.onBackground,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
             Text(
-                text = functionInfo.subTitleL,
+                text = appInfo.packageName,
                 fontFamily = FontFamily.Default,
                 fontSize = 12.sp,
-                color = Color.Gray,
+                color = MaterialTheme.colors.onBackground,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
         }
-        Switch(checked = checked.value, onCheckedChange = null)
+        Checkbox(
+            checked = checked.value,
+            onCheckedChange = null,
+            colors = CheckboxDefaults.colors(checkedColor = color)
+        )
     }
 }
+

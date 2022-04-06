@@ -1,9 +1,8 @@
-package h.w.rmuitool.hook
+package h.w.rmuitool.logic.hook
 
-import h.w.rmuitool.hook.browser.HideDownloadListFooter
-import h.w.rmuitool.hook.browser.HideHomeContainer
-import h.w.rmuitool.hook.browser.ShowHomePageSetting
-import h.w.rmuitool.ktx.HookInterface
+import h.w.rmuitool.logic.hook.browser.HideDownloadListFooter
+import h.w.rmuitool.logic.hook.browser.HideHomeContainer
+import h.w.rmuitool.logic.hook.browser.ShowHomePageSetting
 
 class Browser : HookInterface {
 

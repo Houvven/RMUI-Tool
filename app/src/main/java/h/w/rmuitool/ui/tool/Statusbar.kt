@@ -1,4 +1,4 @@
-package h.w.rmuitool.ui.view
+package h.w.rmuitool.ui.tool
 
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
